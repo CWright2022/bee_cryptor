@@ -1,2 +1,5 @@
 output.txt
 bee_cryptor_test.py
+__pycache__/
+.pytest_cache/
+.vscode/
