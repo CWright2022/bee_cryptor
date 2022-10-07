@@ -28,6 +28,7 @@ def make_base_word_list(file):
     '''
     # put all words in list, skip any duplicates
     out_list = []
+    # make sure list is long enough to contain all 94 possible characters
     with open(file) as file:
         for line in file:
             words = line.split()
@@ -49,6 +50,10 @@ def encrypt(input_text, file):
     index_list = make_index_list(input_text)
     # get base word list
     base_word_list = make_base_word_list(file)
+    #ensure base word list is long enough for all 94 characters
+    if len(base_word_list)<94:
+        print("ERROR: Word list not long enough. Wordlist must contain at least 94 words, separated by spaces.")
+        return ""
     # for each in index_list, append to encrpyted_word list
     encrypted_word_list = []
     for i in index_list:
