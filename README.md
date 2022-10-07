@@ -4,9 +4,9 @@ A fun project re-born from an old HS project. Encrypts text using the Bee Movie 
 ## Usage
 Run bee_cryptor.py to be presented with a very basic CLI. Basic form is to enter an option, then enter input.
 ### Options
-e - encrypt user-provided text
-d - decrypt user-provided text
-ef - encrypt from file
-df - decrypt from file
-w - change wordlist (default is script.txt)
-x - exit
+e - encrypt user-provided text  
+d - decrypt user-provided text  
+ef - encrypt from file  
+df - decrypt from file  
+w - change wordlist (default is script.txt)  
+x - exit  
