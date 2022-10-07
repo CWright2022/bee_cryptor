@@ -33,25 +33,46 @@ def make_base_word_list(file):
         for line in file:
             words = line.split()
             for word in words:
-                #if word isn't already in list...
+                # if word isn't already in list...
                 if word not in out_list:
-                    #and it's not a newline or CRLF...
+                    # and it's not a newline or CRLF...
                     if word != "\n" and word != "\r\n":
-                        #then add it
+                        # then add it
                         out_list.append(word)
         return out_list
 
 
-def encrypt(input_text, file):
+def read_from_file(file):
     '''
-    returns a big long string with each word from script separated by a space, given input text and the script
+    helper function that returns a string separated by spaces, from a file. Useful for input that contains newlines.
     '''
+    output_string = ""
+    with open(file) as file:
+        for line in file:
+            line_list=line.split()
+            for word in line_list:
+                output_string=output_string+word+" "
+    return output_string
+
+
+def encrypt(input_text, file, from_file=False):
+    '''
+    returns a big long string with each word from script separated by a space,
+    given input text and the script. if from_file=True, then it treats input_text
+    as a filename to read from a file.
+    '''
+    # read from file, if applicable
+    if from_file == True:
+        try:
+            input_text = read_from_file(input_text)
+        except FileNotFoundError:
+            print("file not found. using your filename as input text")
     # get list of input text
     index_list = make_index_list(input_text)
     # get base word list
     base_word_list = make_base_word_list(file)
-    #ensure base word list is long enough for all 94 characters
-    if len(base_word_list)<94:
+    # ensure base word list is long enough for all 94 characters
+    if len(base_word_list) < 94:
         print("ERROR: Word list not long enough. Wordlist must contain at least 94 words, separated by spaces.")
         return ""
     # for each in index_list, append to encrpyted_word list
@@ -77,11 +98,20 @@ def encrypt(input_text, file):
 # convert each back to unicode
 
 
-def decrypt(input_text, file):
+def decrypt(input_text, file, from_file=False):
     '''
     makes list of index of each word (separated by space) of input text
     '''
+    if from_file == True:
+        try:
+            input_text = read_from_file(input_text)
+        except FileNotFoundError:
+            print("file not found. using your filename as input text")
     base_text_list = make_base_word_list(file)
+    # ensure base word list is long enough for all 94 characters
+    if len(base_text_list) < 94:
+        print("ERROR: Word list not long enough. Wordlist must contain at least 94 words, separated by spaces.")
+        return ""
     text_list = input_text.split()
     index_list = []
     # for each in text_list, add OFFSET to index and convert to unicode
@@ -104,8 +134,7 @@ def main():
     print("Welcome to the Bee-Cryptor - an encryption standard for bees\nby Cayden Wright, written 10/6/22\n\n")
     while True:
         # prompt for choice
-        user_choice = input(
-            "type e to encrypt, d to decrypt, w to set wordlist (default is script.txt), or x to quit\n\n")
+        user_choice = input("e - encrypt\nef - encrypt from file\nd - decrypt\ndf - decrypt from file\nw - change wordlist(default is script.txt)\nx - exit\n\n")
         # exit case
         if user_choice.lower() == "x":
             break
@@ -120,7 +149,7 @@ def main():
                       " not found. Ensure file exists and path is correct.")
                 continue
             print("Wordlist set to:", wordlist)
-        # encrypt case
+        # encrypt user input case
         elif user_choice.lower() == "e":
             input_text = input("enter text to encrypt:\n")
             encrypted_text = encrypt(input_text, wordlist)
@@ -131,6 +160,20 @@ def main():
         elif user_choice.lower() == "d":
             input_text = input("enter text to decrypt:\n")
             decrypted_text = decrypt(input_text, wordlist)
+            print("Your decrypted text is:\n\n"+decrypted_text, end="\n\n")
+            with open('output.txt', 'w') as file:
+                file.write(decrypted_text)
+        #encrypt from file
+        elif user_choice.lower() == "ef":
+            input_text = input("enter input file name:\n")
+            encrypted_text = encrypt(input_text, wordlist, True)
+            print("Your encrypted text is:\n\n"+encrypted_text, end="\n\n")
+            with open('output.txt', 'w') as file:
+                file.write(encrypted_text)
+        #decrypt from file
+        elif user_choice.lower() == "df":
+            input_text = input("enter input file name:\n")
+            decrypted_text = decrypt(input_text, wordlist, True)
             print("Your decrypted text is:\n\n"+decrypted_text, end="\n\n")
             with open('output.txt', 'w') as file:
                 file.write(decrypted_text)
