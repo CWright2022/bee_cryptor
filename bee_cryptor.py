@@ -3,8 +3,8 @@ Bee_cryptor: encrypt or decrypts text using a script (originally the Bee Movie s
 reborn from an old high school project
 Cayden Wright 10/06/2022
 '''
-
-
+#amount of shift from first unicode character to the first one we actually want to use. Allows script to be smaller.
+OFFSET=32
 def make_index_list(input_text):
     '''
     converts a string into a numeric list, with space being 0 and tilde being 94
@@ -14,8 +14,8 @@ def make_index_list(input_text):
     input_list = list(input_text)
     for i in range(len(input_list)):
         char = ord(input_list[i])
-        # subtract 32, so that space is 0
-        input_list[i] = char-32
+        # subtract OFFSET, so that space is 0
+        input_list[i] = char-OFFSET
     # return the changed list
     return input_list
 
@@ -56,7 +56,7 @@ def encrypt(input_text, file):
 
 # make list from space separated string
 # make numeric list from each word
-# add 32 to each
+# add OFFSET to each
 # convert each back to unicode
 
 
@@ -67,9 +67,9 @@ def decrypt(input_text, file):
     base_text_list=make_base_word_list(file)
     text_list = input_text.split()
     index_list = []
-    # for each in text_list, add 32 to index and convert to unicode
+    # for each in text_list, add OFFSET to index and convert to unicode
     for i in text_list:
-        index_list.append(chr((base_text_list.index(i))+32))
+        index_list.append(chr((base_text_list.index(i))+OFFSET))
     #then convert to string and return it
     output_string = ""
     for i in index_list:
@@ -77,6 +77,38 @@ def decrypt(input_text, file):
 
     return output_string
 
+def main():
+    wordlist="script.txt"
+    #print welcome
+    print("Welcome to the Bee-Cryptor - an encryption standard for bees\nby Cayden Wright, written 10/6/22\n\n")
+    while True:
+        #prompt for choice
+        user_choice=input("type e to encrypt, d to decrypt, w to set wordlist (default is script.txt), or x to quit\n\n")
+        #exit case
+        if user_choice.lower()=="x":
+            break
+        #wordlist case
+        elif user_choice.lower()=="w":
+            wordlist=input("enter path to new wordlist:\n\n")
+            #ensure file actually exists
+            try:
+                open(wordlist)
+            except FileNotFoundError:
+                print("File "+wordlist+" not found. Ensure file exists and path is correct.")
+                continue
+            print("Wordlist set to:",wordlist)
+        #encrypt case
+        elif user_choice.lower()=="e":
+            input_text=input("enter text to encrypt:\n")
+            encrypted_text=encrypt(input_text, wordlist)
+            print("Your encrypted text is:\n\n"+encrypted_text, end="\n\n")
+        #decrypt case
+        elif user_choice.lower() == "d":
+            input_text = input("enter text to decrypt:\n")
+            decrypted_text = decrypt(input_text, wordlist)
+            print("Your decrypted text is:\n\n"+decrypted_text,end="\n\n")
+        else:
+            print("invalid input")
 
-# right? coworkers back back afterwards
-print(decrypt("right? coworkers back back afterwards", "test_script.txt"))
+if __name__=="__main__":
+    main()

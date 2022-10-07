@@ -21,11 +21,10 @@ def test_make_base_word_list_basic():
     # analyze
     assert expected == actual
 
-def test_make_encrypted_word_list_basic():
+def test_encrypt_basic():
     # setup
-    expected = ['right?', 'coworkers', 'back', 'back', 'afterwards',
-                'Bee', 'two)', 'And', 'back', 'back', 'According']
+    expected = "right? coworkers back back afterwards Bee two) And back back According Movie "
     # invoke
-    actual = bee_cryptor.make_encrypted_word_list("hello billy", "test_script.txt")
+    actual = bee_cryptor.encrypt("hello billy!", "test_script.txt")
     # analyze
     assert expected == actual
