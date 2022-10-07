@@ -39,17 +39,44 @@ def encrypt(input_text, file):
     '''
     returns a big long string with each word from script separated by a space, given input text and the script
     '''
+    # get list of input text
     index_list = make_index_list(input_text)
+    # get base word list
     base_word_list = make_base_word_list(file)
+    # for each in index_list, append to encrpyted_word list
     encrypted_word_list = []
-    i = 0
     for i in index_list:
         encrypted_word_list.append(base_word_list[i])
-    encrypted_string=""
+    # for each in word list, append to string
+    encrypted_string = ""
     for i in encrypted_word_list:
         encrypted_string = encrypted_string+i+" "
 
     return encrypted_string
 
+# make list from space separated string
+# make numeric list from each word
+# add 32 to each
+# convert each back to unicode
 
-print(encrypt("hello billy", "test_script.txt"))
+
+def decrypt(input_text, file):
+    '''
+    makes list of index of each word (separated by space) of input text
+    '''
+    base_text_list=make_base_word_list(file)
+    text_list = input_text.split()
+    index_list = []
+    # for each in text_list, add 32 to index and convert to unicode
+    for i in text_list:
+        index_list.append(chr((base_text_list.index(i))+32))
+    #then convert to string and return it
+    output_string = ""
+    for i in index_list:
+        output_string = output_string+i
+
+    return output_string
+
+
+# right? coworkers back back afterwards
+print(decrypt("right? coworkers back back afterwards", "test_script.txt"))
