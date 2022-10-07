@@ -13,13 +13,6 @@ def convert_to_index_list(input_text):
     input_list=list(input_text)
     for i in range (len(input_list)):
         char = ord(input_list[i])
-        #32 is the offset (to make space 0)
         input_list[i]=char-32
     #return the changed list
     return input_list
-
-
-def encrypt(text, file):
-    '''
-    encrypts text using file
-    '''
