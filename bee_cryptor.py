@@ -3,6 +3,8 @@ Bee_cryptor: encrypt or decrypts text using a script (originally the Bee Movie s
 reborn from an old high school project
 Cayden Wright 10/06/2022
 '''
+import argparse
+from ast import arg
 # amount of shift from first unicode character to the first one we actually want to use. Allows script to be smaller.
 OFFSET = 32
 
@@ -49,9 +51,9 @@ def read_from_file(file):
     output_string = ""
     with open(file) as file:
         for line in file:
-            line_list=line.split()
+            line_list = line.split()
             for word in line_list:
-                output_string=output_string+word+" "
+                output_string = output_string+word+" "
     return output_string
 
 
@@ -128,13 +130,14 @@ def decrypt(input_text, file, from_file=False):
     return output_string
 
 
-def main():
+def run_interactive_mode():
     wordlist = "script.txt"
     # print welcome
     print("Welcome to the Bee-Cryptor - an encryption standard for bees\nby Cayden Wright, written 10/6/22\n\n")
     while True:
         # prompt for choice
-        user_choice = input("e - encrypt\nef - encrypt from file\nd - decrypt\ndf - decrypt from file\nw - change wordlist(default is script.txt)\nx - exit\n\n")
+        user_choice = input(
+            "e - encrypt\nef - encrypt from file\nd - decrypt\ndf - decrypt from file\nw - change wordlist(default is script.txt)\nx - exit\n\n")
         # exit case
         if user_choice.lower() == "x":
             break
@@ -163,14 +166,14 @@ def main():
             print("Your decrypted text is:\n\n"+decrypted_text, end="\n\n")
             with open('output.txt', 'w') as file:
                 file.write(decrypted_text)
-        #encrypt from file
+        # encrypt from file
         elif user_choice.lower() == "ef":
             input_text = input("enter input file name:\n")
             encrypted_text = encrypt(input_text, wordlist, True)
             print("Your encrypted text is:\n\n"+encrypted_text, end="\n\n")
             with open('output.txt', 'w') as file:
                 file.write(encrypted_text)
-        #decrypt from file
+        # decrypt from file
         elif user_choice.lower() == "df":
             input_text = input("enter input file name:\n")
             decrypted_text = decrypt(input_text, wordlist, True)
@@ -181,5 +184,37 @@ def main():
             print("invalid input")
 
 
+def parse_cli_arguments():
+    '''
+    returns "args", an object with methods (i think that's what they're called) corresponding to the value of each argument
+    '''
+    # setup arg_parser
+    arg_parser = argparse.ArgumentParser()
+    # you can't have multiple of these together
+    enc_text_arg_group = arg_parser.add_mutually_exclusive_group()
+    enc_text_arg_group.add_argument('-encrypt', type=str, help="text to encrypt")
+    enc_text_arg_group.add_argument('-decrypt', type=str, help="text to decrypt")
+    enc_text_arg_group.add_argument('-encrypt_file', type=str, help="file to encrypt from")
+    enc_text_arg_group.add_argument('-decrypt_file', type=str, help="file to decrypt from")
+    # but you can have the wordlist, so it doesn't get added to the group
+    arg_parser.add_argument('-wordlist', type=str, help="file to use as wordlist", default="script.txt")
+    args = arg_parser.parse_args()
+    return args
+
+
+def run_cli_argument_mode():
+    '''
+    runs in "CLI argument mode" - this function returns the output that would normally be printed to the user
+    '''
+    args = parse_cli_arguments()
+    # encrypt case
+    if args.encrypt:
+        return (encrypt(args.encrypt, args.wordlist))
+
+
 if __name__ == "__main__":
-    main()
+    args=parse_cli_arguments()
+    if args.encrypt or args.decrypt or args.encrypt_file or args.decrypt_file:
+        print(run_cli_argument_mode())
+    else:
+        run_interactive_mode()
