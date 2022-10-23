@@ -4,7 +4,6 @@ reborn from an old high school project
 Cayden Wright 10/06/2022
 '''
 import argparse
-from ast import arg
 # amount of shift from first unicode character to the first one we actually want to use. Allows script to be smaller.
 OFFSET = 32
 
@@ -44,31 +43,12 @@ def make_base_word_list(file):
         return out_list
 
 
-def read_from_file(file):
-    '''
-    helper function that returns a string separated by spaces, from a file. Useful for input that contains newlines.
-    '''
-    output_string = ""
-    with open(file) as file:
-        for line in file:
-            line_list = line.split()
-            for word in line_list:
-                output_string = output_string+word+" "
-    return output_string
-
-
-def encrypt(input_text, file, from_file=False):
+def encrypt(input_text, file):
     '''
     returns a big long string with each word from script separated by a space,
     given input text and the script. if from_file=True, then it treats input_text
     as a filename to read from a file.
     '''
-    # read from file, if applicable
-    if from_file == True:
-        try:
-            input_text = read_from_file(input_text)
-        except FileNotFoundError:
-            print("file not found. using your filename as input text")
     # get list of input text
     index_list = make_index_list(input_text)
     # get base word list
@@ -84,7 +64,7 @@ def encrypt(input_text, file, from_file=False):
             encrypted_word_list.append(base_word_list[i])
         # if we find a character we don't know, insert a space
         except IndexError:
-            print("skipping unknown character")
+            print("skipping unknown character - using a space instead")
             encrypted_word_list.append(" ")
 
     # for each in word list, append to string
@@ -94,21 +74,11 @@ def encrypt(input_text, file, from_file=False):
 
     return encrypted_string
 
-# make list from space separated string
-# make numeric list from each word
-# add OFFSET to each
-# convert each back to unicode
 
-
-def decrypt(input_text, file, from_file=False):
+def decrypt(input_text, file):
     '''
-    makes list of index of each word (separated by space) of input text
+    returns decrypted string given an input string and wordlist (file)
     '''
-    if from_file == True:
-        try:
-            input_text = read_from_file(input_text)
-        except FileNotFoundError:
-            print("file not found. using your filename as input text")
     base_text_list = make_base_word_list(file)
     # ensure base word list is long enough for all 94 characters
     if len(base_text_list) < 94:
@@ -121,7 +91,7 @@ def decrypt(input_text, file, from_file=False):
         try:
             index_list.append(chr((base_text_list.index(i))+OFFSET))
         except ValueError:
-            print("Invalid token - ensure your input is correct")
+            print("error decrypting - ensure you have the correct wordlist and input")
     # then convert to string and return it
     output_string = ""
     for i in index_list:
@@ -130,58 +100,34 @@ def decrypt(input_text, file, from_file=False):
     return output_string
 
 
-def run_interactive_mode():
-    wordlist = "script.txt"
-    # print welcome
-    print("Welcome to the Bee-Cryptor - an encryption standard for bees\nby Cayden Wright, written 10/6/22\n\n")
-    while True:
-        # prompt for choice
-        user_choice = input(
-            "e - encrypt\nef - encrypt from file\nd - decrypt\ndf - decrypt from file\nw - change wordlist(default is script.txt)\nx - exit\n\n")
-        # exit case
-        if user_choice.lower() == "x":
-            break
-        # wordlist case
-        elif user_choice.lower() == "w":
-            wordlist = input("enter path to new wordlist:\n\n")
-            # ensure file actually exists
-            try:
-                open(wordlist)
-            except FileNotFoundError:
-                print("File "+wordlist +
-                      " not found. Ensure file exists and path is correct.")
-                continue
-            print("Wordlist set to:", wordlist)
-        # encrypt user input case
-        elif user_choice.lower() == "e":
-            input_text = input("enter text to encrypt:\n")
-            encrypted_text = encrypt(input_text, wordlist)
-            print("Your encrypted text is:\n\n"+encrypted_text, end="\n\n")
-            with open('output.txt', 'w') as file:
-                file.write(encrypted_text)
-        # decrypt case
-        elif user_choice.lower() == "d":
-            input_text = input("enter text to decrypt:\n")
-            decrypted_text = decrypt(input_text, wordlist)
-            print("Your decrypted text is:\n\n"+decrypted_text, end="\n\n")
-            with open('output.txt', 'w') as file:
-                file.write(decrypted_text)
-        # encrypt from file
-        elif user_choice.lower() == "ef":
-            input_text = input("enter input file name:\n")
-            encrypted_text = encrypt(input_text, wordlist, True)
-            print("Your encrypted text is:\n\n"+encrypted_text, end="\n\n")
-            with open('output.txt', 'w') as file:
-                file.write(encrypted_text)
-        # decrypt from file
-        elif user_choice.lower() == "df":
-            input_text = input("enter input file name:\n")
-            decrypted_text = decrypt(input_text, wordlist, True)
-            print("Your decrypted text is:\n\n"+decrypted_text, end="\n\n")
-            with open('output.txt', 'w') as file:
-                file.write(decrypted_text)
-        else:
-            print("invalid input")
+def encrypt_from_file(file, wordlist):
+    '''
+    encrypt from a file, given a wordlist
+    '''
+    # get text from file
+    string_to_encrypt = ""
+    with open(file) as file:
+        for line in file:
+            line_list = line.split()
+            for word in line_list:
+                string_to_encrypt = string_to_encrypt+word+" "
+    # encrypt it
+    encrypt(string_to_encrypt, wordlist)
+
+
+def decrypt_from_file(file, wordlist):
+    '''
+    decrypt from a file, given a wordlist
+    '''
+    # get text from file
+    string_to_decrypt = ""
+    with open(file) as file:
+        for line in file:
+            line_list = line.split()
+            for word in line_list:
+                string_to_decrypt = string_to_decrypt+word+" "
+    # decrypt it
+    decrypt(string_to_decrypt, wordlist)
 
 
 def parse_cli_arguments():
@@ -197,24 +143,19 @@ def parse_cli_arguments():
     enc_text_arg_group.add_argument('-encrypt_file', type=str, help="file to encrypt from")
     enc_text_arg_group.add_argument('-decrypt_file', type=str, help="file to decrypt from")
     # but you can have the wordlist, so it doesn't get added to the group
-    arg_parser.add_argument('-wordlist', type=str, help="file to use as wordlist", default="script.txt")
+    arg_parser.add_argument('-wordlist', type=str, help="file to use as wordlist (default is ./script.txt", default="script.txt")
     args = arg_parser.parse_args()
     return args
 
 
-def run_cli_argument_mode():
-    '''
-    runs in "CLI argument mode" - this function returns the output that would normally be printed to the user
-    '''
-    args = parse_cli_arguments()
-    # encrypt case
-    if args.encrypt:
-        return (encrypt(args.encrypt, args.wordlist))
-
-
 if __name__ == "__main__":
-    args=parse_cli_arguments()
-    if args.encrypt or args.decrypt or args.encrypt_file or args.decrypt_file:
-        print(run_cli_argument_mode())
-    else:
-        run_interactive_mode()
+    args = parse_cli_arguments()
+    wordlist = args.wordlist
+    if args.encrypt:
+        print(encrypt(args.encrypt, wordlist))
+    elif args.decrypt:
+        print(decrypt(args.decrypt, wordlist))
+    elif args.encrypt_file:
+        print(encrypt_from_file(args.encrypt_file, wordlist))
+    elif args.decrypt_file:
+        print(decrypt_from_file(args.encrypt_file, wordlist))
