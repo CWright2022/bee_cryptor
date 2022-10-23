@@ -138,12 +138,12 @@ def parse_cli_arguments():
     arg_parser = argparse.ArgumentParser()
     # you can't have multiple of these together
     enc_text_arg_group = arg_parser.add_mutually_exclusive_group()
-    enc_text_arg_group.add_argument('-encrypt', type=str, help="text to encrypt")
-    enc_text_arg_group.add_argument('-decrypt', type=str, help="text to decrypt")
-    enc_text_arg_group.add_argument('-encrypt_file', type=str, help="file to encrypt from")
-    enc_text_arg_group.add_argument('-decrypt_file', type=str, help="file to decrypt from")
+    enc_text_arg_group.add_argument('-encrypt', type=str, help="encrypt from text")
+    enc_text_arg_group.add_argument('-decrypt', type=str, help="decrypt from text")
+    enc_text_arg_group.add_argument('-encrypt_file', type=str, help="encrypt from file")
+    enc_text_arg_group.add_argument('-decrypt_file', type=str, help="decrypt from file")
     # but you can have the wordlist, so it doesn't get added to the group
-    arg_parser.add_argument('-wordlist', type=str, help="file to use as wordlist (default is ./script.txt", default="script.txt")
+    arg_parser.add_argument('-wordlist', type=str, help="file to use as wordlist (default is ./script.txt)", default="script.txt")
     args = arg_parser.parse_args()
     return args
 
