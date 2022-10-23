@@ -112,7 +112,7 @@ def encrypt_from_file(file, wordlist):
             for word in line_list:
                 string_to_encrypt = string_to_encrypt+word+" "
     # encrypt it
-    encrypt(string_to_encrypt, wordlist)
+    return encrypt(string_to_encrypt, wordlist)
 
 
 def decrypt_from_file(file, wordlist):
@@ -127,7 +127,7 @@ def decrypt_from_file(file, wordlist):
             for word in line_list:
                 string_to_decrypt = string_to_decrypt+word+" "
     # decrypt it
-    decrypt(string_to_decrypt, wordlist)
+    return decrypt(string_to_decrypt, wordlist)
 
 
 def parse_cli_arguments():
@@ -142,8 +142,9 @@ def parse_cli_arguments():
     enc_text_arg_group.add_argument('-decrypt', type=str, help="decrypt from text")
     enc_text_arg_group.add_argument('-encrypt_file', type=str, help="encrypt from file")
     enc_text_arg_group.add_argument('-decrypt_file', type=str, help="decrypt from file")
-    # but you can have the wordlist, so it doesn't get added to the group
+    # but you can have -wordlist and -output, so it doesn't get added to the group
     arg_parser.add_argument('-wordlist', type=str, help="file to use as wordlist (default is ./script.txt)", default="script.txt")
+    arg_parser.add_argument('-out_file', type=str,help="file to write output to, if any. Default just prints to terminal")
     args = arg_parser.parse_args()
     return args
 
@@ -151,11 +152,30 @@ def parse_cli_arguments():
 if __name__ == "__main__":
     args = parse_cli_arguments()
     wordlist = args.wordlist
-    if args.encrypt:
-        print(encrypt(args.encrypt, wordlist))
-    elif args.decrypt:
-        print(decrypt(args.decrypt, wordlist))
-    elif args.encrypt_file:
-        print(encrypt_from_file(args.encrypt_file, wordlist))
-    elif args.decrypt_file:
-        print(decrypt_from_file(args.encrypt_file, wordlist))
+    #if we have a file output, then just write to file
+    if args.out_file:
+        out_file=args.out_file
+        output=""
+        if args.encrypt:
+            output=encrypt(args.encrypt, wordlist)
+        elif args.decrypt:
+            output=decrypt(args.decrypt, wordlist)
+        elif args.encrypt_file:
+            output=encrypt_from_file(args.encrypt_file, wordlist)
+        elif args.decrypt_file:
+            output=decrypt_from_file(args.decrypt_file, wordlist)
+        #write to file here
+        with open(out_file, 'w') as output_file:
+            output_file.write(output)
+    #otherwise just print to terminal
+    else:
+        if args.encrypt:
+            print(encrypt(args.encrypt, wordlist))
+        elif args.decrypt:
+            print(decrypt(args.decrypt, wordlist))
+        elif args.encrypt_file:
+            print(encrypt_from_file(args.encrypt_file, wordlist))
+        elif args.decrypt_file:
+            print(decrypt_from_file(args.decrypt_file, wordlist))
+        else:
+            print("no valid arguments")
