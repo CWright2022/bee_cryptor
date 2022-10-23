@@ -29,11 +29,11 @@ EXAMPLE: python bee_cryptor.py -encrypt_from_file my_input.txt
 #### -decrypt_from_file (FILE_PATH) --- decrypts from text in a file
 Uses the decrypt_from_file() function to decrypt text from a file using the specified wordlist (if no wordlist specified, defaults to ./script.txt). Files with spaces or quotations need to be handled slightly differently, see example above.  
 FILE_NAME must be a .txt file.  
-EXAMPLE: python bee_cryptor.py -decrypt_from_file my_input.txt
+EXAMPLE: `python bee_cryptor.py -decrypt_from_file my_input.txt`
 
 #### -wordlist (FILE_PATH) --- used in combination with other commands to set wordlist
 This option specifies a different word list to use, rather than the provided default Bee Movie Script (script.txt). Wordlists must be at least 94 words long, space-separated, .txt files. Otherwise, you may see errors such as `ERROR: Word list not long enough. Wordlist must contain at least 94 words, separated by spaces.`.  
-Example: `python bee_cryptor.py -encrypt "secret message" -wordlist "emancipation_proclamation.txt"`  
+EXAMPLE: `python bee_cryptor.py -encrypt "secret message" -wordlist "emancipation_proclamation.txt"`  
 
 #### -out_file (FILE_PATH) --- used to set output file
 Use this option to have bee_cryptor output to a file rather than the terminal by specifying a file path.  
