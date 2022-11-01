@@ -2,8 +2,8 @@
 A fun project re-born from an old HS project. Encrypts text using the Bee Movie script (or any other multi-line) text of your choosing. Also the much better successor to bcrypt.
 
 ## **Usage**
-Run bee_cryptor.py to be presented with a very basic CLI. Basic form is to enter an option, then enter input.
--h, --help                  show help message and exit
+Run bee_cryptor.py to be presented with a very basic CLI. Basic form is to enter an option, then enter input.  
+-h, --help                  show help message and exit  
 -encrypt (TEXT)             text to encrypt  
 -decrypt (TEXT)             text to decrypt  
 -encrypt_file (FILE_PATH)   file to encrypt from  
